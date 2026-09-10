@@ -1,0 +1,186 @@
+import { supabase } from '../../lib/supabase'
+
+export const STATUSES = ['pending', 'confirmed', 'sample_collected', 'report_ready', 'completed', 'cancelled']
+
+export async function fetchLookups() {
+  const [{ data: packages }, { data: tests }] = await Promise.all([
+    supabase.from('packages').select('id, name, price'),
+    supabase.from('individual_tests').select('id, name, price'),
+  ])
+  return {
+    packagesById: Object.fromEntries((packages || []).map((p) => [p.id, p])),
+    testsById: Object.fromEntries((tests || []).map((t) => [t.id, t])),
+  }
+}
+
+export async function fetchBookings({ date, status } = {}) {
+  let query = supabase.from('bookings').select('*').order('created_at', { ascending: false })
+  if (date) query = query.eq('scheduled_date', date)
+  if (status) query = query.eq('status', status)
+  const { data: bookings, error } = await query
+  if (error) throw error
+
+  const ids = (bookings || []).map((b) => b.id)
+  let addressesByBooking = {}
+  if (ids.length) {
+    const { data: addresses } = await supabase.from('addresses').select('*').in('booking_id', ids)
+    addressesByBooking = Object.fromEntries((addresses || []).map((a) => [a.booking_id, a]))
+  }
+
+  return (bookings || []).map((b) => ({ ...b, address: addressesByBooking[b.id] || null }))
+}
+
+export async function updateBookingStatus(booking, status) {
+  const { error } = await supabase.from('bookings').update({ status }).eq('id', booking.id)
+  if (error) throw error
+}
+
+export async function updateBookingStaff(id, assignedStaff) {
+  const { error } = await supabase.from('bookings').update({ assigned_staff: assignedStaff }).eq('id', id)
+  if (error) throw error
+}
+
+/** Fetches active collection-staff accounts (role='collector') with their current open-job count, so the admin can see who's free before assigning. */
+/** Every active staff/admin login — for the plain "Assigned staff" dropdown on lab-visit bookings. */
+export async function fetchAllStaff() {
+  const { data, error } = await supabase
+    .from('staff_profiles')
+    .select('id, full_name, email')
+    .eq('is_active', true)
+    .order('full_name', { ascending: true })
+  if (error) throw error
+  return data || []
+}
+
+export async function fetchCollectorsWithLoad() {
+  const [{ data: collectors, error: cErr }, { data: openJobs, error: jErr }] = await Promise.all([
+    // Anyone with the "collections" tab enabled (via Access), not a
+    // separate role — admin toggles this per staff member.
+    supabase.from('staff_profiles').select('id, full_name, email').contains('allowed_tabs', ['collections']).eq('is_active', true),
+    supabase.from('bookings').select('assigned_collector_id')
+      .not('assigned_collector_id', 'is', null)
+      .in('collection_status', ['assigned', 'accepted', 'en_route', 'arrived']),
+  ])
+  if (cErr) throw cErr
+  if (jErr) throw jErr
+  const loadById = {}
+  for (const job of openJobs || []) {
+    loadById[job.assigned_collector_id] = (loadById[job.assigned_collector_id] || 0) + 1
+  }
+  return (collectors || [])
+    .map((c) => ({ ...c, openJobs: loadById[c.id] || 0 }))
+    .sort((a, b) => a.openJobs - b.openJobs)
+}
+
+/** Assigns (or re-assigns) a collector to a home-collection booking. */
+export async function assignCollector(bookingId, collectorId) {
+  const { error } = await supabase
+    .from('bookings')
+    .update({ assigned_collector_id: collectorId || null, collection_status: collectorId ? 'assigned' : 'unassigned' })
+    .eq('id', bookingId)
+  if (error) throw error
+}
+
+export async function updateCallStatus(id, callStatus) {
+  const { error } = await supabase.from('bookings').update({ call_status: callStatus }).eq('id', id)
+  if (error) throw error
+}
+
+export async function updateAdminNotes(id, notes) {
+  const { error } = await supabase.from('bookings').update({ admin_notes: notes }).eq('id', id)
+  if (error) throw error
+}
+
+export async function updatePrescriptionNotes(id, notes) {
+  const { error } = await supabase.from('bookings').update({ prescription_notes: notes }).eq('id', id)
+  if (error) throw error
+}
+
+export async function setSpamFlag(id, isSpam) {
+  const { error } = await supabase.from('bookings').update({ is_spam: isSpam }).eq('id', id)
+  if (error) throw error
+}
+
+/** Permanently removes a fake/spam/test booking. Also cleans up its address row and any uploaded files so nothing orphaned is left in storage. */
+export async function deleteBooking(booking) {
+  await supabase.from('addresses').delete().eq('booking_id', booking.id)
+  if (booking.prescription_url) {
+    const path = booking.prescription_url.split('/prescriptions/')[1]
+    if (path) await supabase.storage.from('prescriptions').remove([decodeURIComponent(path)])
+  }
+  if (booking.report_url) {
+    const path = booking.report_url.split('/reports/')[1]
+    if (path) await supabase.storage.from('reports').remove([decodeURIComponent(path)])
+  }
+  if (booking.payment_screenshot_url) {
+    const path = booking.payment_screenshot_url.split('/payment-proofs/')[1]
+    if (path) await supabase.storage.from('payment-proofs').remove([decodeURIComponent(path)])
+  }
+  const { error } = await supabase.from('bookings').delete().eq('id', booking.id)
+  if (error) throw error
+}
+
+export async function uploadReport(bookingId, file) {
+  const path = `${bookingId}/${Date.now()}-${file.name}`
+  const { error: uploadError } = await supabase.storage.from('reports').upload(path, file, { upsert: true })
+  if (uploadError) throw uploadError
+  const { data } = supabase.storage.from('reports').getPublicUrl(path)
+  const { error } = await supabase
+    .from('bookings')
+    .update({ report_url: data.publicUrl, report_status: 'uploaded' })
+    .eq('id', bookingId)
+  if (error) throw error
+  return data.publicUrl
+}
+
+export async function skipReport(bookingId) {
+  const { error } = await supabase.from('bookings').update({ report_status: 'skipped', report_url: null }).eq('id', bookingId)
+  if (error) throw error
+}
+
+export async function resetReport(bookingId) {
+  const { error } = await supabase.from('bookings').update({ report_status: 'pending', report_url: null }).eq('id', bookingId)
+  if (error) throw error
+}
+
+/**
+ * Lightweight, no-infra spam heuristic computed over whatever bookings are
+ * currently loaded: flags a booking if the same phone number shows up 3+
+ * times, or the name looks like a placeholder (all digits, single
+ * repeated character, or too short to be a real name).
+ */
+export function computeSpamFlags(bookings) {
+  const phoneCounts = {}
+  const ipCounts = {}
+  for (const b of bookings) {
+    if (b.customer_phone) phoneCounts[b.customer_phone] = (phoneCounts[b.customer_phone] || 0) + 1
+    if (b.customer_ip) ipCounts[b.customer_ip] = (ipCounts[b.customer_ip] || 0) + 1
+  }
+  return bookings.map((b) => {
+    const reasons = []
+    if (b.customer_phone && phoneCounts[b.customer_phone] >= 3) {
+      reasons.push(`Same number used ${phoneCounts[b.customer_phone]}x`)
+    }
+    if (b.customer_ip && ipCounts[b.customer_ip] >= 4) {
+      reasons.push(`Same IP address used ${ipCounts[b.customer_ip]}x (${b.customer_ip})`)
+    }
+    const name = (b.customer_name || '').trim()
+    if (name && /^(\d+|(.)\2{2,}|test|xxx+|asdf)$/i.test(name.replace(/\s+/g, ''))) {
+      reasons.push('Suspicious name')
+    }
+    if (b.customer_phone && !/^[6-9]\d{9}$/.test(b.customer_phone.replace(/\D/g, '').slice(-10))) {
+      reasons.push('Invalid phone format')
+    }
+    return { ...b, spamReasons: reasons }
+  })
+}
+
+export function computeStats(bookings) {
+  const stats = { total: bookings.length, pending: 0, confirmed: 0, revenue: 0 }
+  for (const b of bookings) {
+    if (b.status === 'pending') stats.pending += 1
+    if (b.status === 'confirmed') stats.confirmed += 1
+    if (b.status !== 'cancelled') stats.revenue += Number(b.total_amount || 0)
+  }
+  return stats
+}
