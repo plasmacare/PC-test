@@ -1,0 +1,403 @@
+.home {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+.home__top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.home__hero {
+  padding: 8px 0 4px;
+  position: relative;
+  overflow: hidden;
+}
+.home__logo-full {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Animated hero backdrop ---------- */
+/* Everything below uses only transform/opacity keyframes so it's cheap
+   to run continuously — no layout thrash, no JS animation loop. */
+.hero-bg {
+  position: absolute;
+  inset: -20px -20px auto -20px;
+  height: 220px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.hero-bg__glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192, 21, 47, 0.10) 0%, rgba(192, 21, 47, 0) 70%);
+  animation: hero-glow-pulse 5s ease-in-out infinite;
+}
+@keyframes hero-glow-pulse {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+}
+.hero-bg__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0.5px);
+  opacity: 0.5;
+}
+.hero-bg__blob--a {
+  width: 14px;
+  height: 14px;
+  left: 12%;
+  top: 40px;
+  background: var(--red-600);
+  opacity: 0.18;
+  animation: hero-blob-float 7s ease-in-out infinite;
+}
+.hero-bg__blob--b {
+  width: 9px;
+  height: 9px;
+  right: 18%;
+  top: 20px;
+  background: var(--navy-800);
+  opacity: 0.14;
+  animation: hero-blob-float 6s ease-in-out infinite 1.2s;
+}
+.hero-bg__blob--c {
+  width: 11px;
+  height: 11px;
+  right: 8%;
+  top: 90px;
+  background: var(--red-600);
+  opacity: 0.12;
+  animation: hero-blob-float 8s ease-in-out infinite 0.6s;
+}
+@keyframes hero-blob-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+.hero-bg__ecg-scroll {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  display: flex;
+  width: max-content;
+  animation: hero-ecg-scroll 9s linear infinite;
+}
+.hero-bg__ecg-track {
+  width: 400px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.hero-bg__ecg-path {
+  fill: none;
+  stroke: var(--red-600);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.16;
+}
+/* Shifts by exactly one track's width (400px) — since both tracks are
+   identical, this loops with no visible seam at any screen size. */
+@keyframes hero-ecg-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-400px); }
+}
+.home__tagline {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--red-600);
+  margin-top: 8px;
+  position: relative;
+  z-index: 1;
+}
+.home__sub {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--slate);
+  position: relative;
+  z-index: 1;
+}
+.home__hero .pulse-divider {
+  position: relative;
+  z-index: 1;
+}
+
+.home__section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--navy-800);
+  margin-bottom: 14px;
+}
+
+/* ---------- Services: pathology big, rest as small chips ---------- */
+.home__services {
+  margin-top: 8px;
+}
+.service-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--navy-100);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-decoration: none;
+  color: var(--ink);
+  position: relative;
+  min-height: 150px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.service-card--live:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-raised);
+  border-color: var(--red-600);
+}
+.service-card--live:active {
+  transform: scale(0.99);
+}
+.service-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--red-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s var(--ease);
+}
+.service-card--live:hover .service-card__icon {
+  transform: scale(1.08) rotate(-4deg);
+}
+.service-card__name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--navy-950);
+}
+.service-card__desc {
+  font-size: 12px;
+  color: var(--slate);
+  line-height: 1.4;
+}
+.service-card__cta {
+  margin-top: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red-600);
+}
+
+.home__also-label {
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--slate-light);
+}
+.home__chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.service-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 6px 12px 6px 8px;
+  font-size: 12px;
+  color: var(--slate);
+  opacity: 0.85;
+}
+.service-chip svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* ---------- Why choose us ---------- */
+.home__why {
+  margin-top: 36px;
+}
+.home__why-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.why-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.why-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+.why-card__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--navy-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.why-card__title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--navy-950);
+  line-height: 1.3;
+}
+.why-card__desc {
+  font-size: 11.5px;
+  color: var(--slate);
+  line-height: 1.4;
+}
+
+/* ---------- Contact / footer ---------- */
+.home__footer {
+  margin-top: 40px;
+}
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  font-size: 13.5px;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.contact-row svg {
+  flex-shrink: 0;
+  color: var(--red-600);
+}
+.contact-row--static {
+  cursor: default;
+  color: var(--slate);
+}
+
+/* ---------- Contact sheet (call vs whatsapp) ---------- */
+.contact-sheet__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 37, 69, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+}
+.contact-sheet {
+  width: 100%;
+  max-width: 640px;
+  background: var(--surface);
+  border-radius: 18px 18px 0 0;
+  padding: 20px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-raised);
+  animation: sheet-up 0.2s var(--ease);
+}
+@keyframes sheet-up {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.contact-sheet__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-800);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.contact-sheet__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.contact-sheet__btn--call {
+  background: var(--navy-950);
+  color: #fff;
+}
+.contact-sheet__btn--whatsapp {
+  background: #25D366;
+  color: #fff;
+}
+.contact-sheet__cancel {
+  margin-top: 6px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--paper);
+  color: var(--slate);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.home__copyright {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 11px;
+  color: var(--slate-light);
+}
+.home__legal-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.home__legal-links a {
+  font-size: 11.5px;
+  color: var(--slate);
+  text-decoration: underline;
+}
