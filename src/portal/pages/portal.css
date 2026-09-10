@@ -1,0 +1,262 @@
+/* ---------- Shared across every portal screen ---------- */
+.admin-splash {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--slate);
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
+}
+.login-error { color: var(--red-600); font-size: 12.5px; margin: -6px 0 12px; }
+.tab-panel { display: flex; flex-direction: column; gap: 4px; }
+
+/* ---------- Portal shell (login, MFA, request-access, B2B) ---------- */
+.portal-screen {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+  background: var(--paper);
+}
+
+.portal-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.portal-card--wide { max-width: 640px; text-align: left; }
+
+.portal-card__logo { width: 64px; height: 64px; margin-bottom: 12px; }
+.portal-card__title { font-size: 1.5rem; color: var(--navy-950); margin-bottom: 4px; }
+.portal-card__subtitle { color: var(--slate); font-size: 0.9rem; margin-bottom: 24px; }
+.portal-card__footer { margin-top: 20px; font-size: 0.85rem; color: var(--slate); }
+.portal-card__footer a { color: var(--red-600); font-weight: 600; text-decoration: none; }
+
+.portal-form { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.portal-form label { font-size: 0.85rem; font-weight: 600; color: var(--navy-950); margin-top: 10px; }
+.portal-form input, .portal-form select, .portal-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 11px 12px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--surface);
+  color: var(--ink);
+}
+.portal-form input:focus, .portal-form select:focus, .portal-form textarea:focus {
+  outline: 2px solid var(--red-600);
+  outline-offset: 1px;
+}
+.portal-form button[type="submit"] { margin-top: 20px; width: 100%; padding: 12px; font-size: 1rem; }
+
+.portal-form__hint { font-size: 0.8rem; color: var(--slate); margin-top: -2px; }
+
+.portal-mfa-qr {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+  background: var(--surface);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+}
+.portal-mfa-qr svg { width: 180px; height: 180px; }
+
+.portal-mfa-secret {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  word-break: break-all;
+  background: var(--paper);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.portal-code-input {
+  text-align: center;
+  letter-spacing: 6px;
+  font-size: 1.3rem;
+  font-family: var(--font-mono);
+}
+
+/* ---------- B2B panel shell ---------- */
+.b2b {
+  min-height: 100dvh;
+  background: var(--paper);
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+.b2b-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(14px, env(safe-area-inset-top)) 16px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.b2b-header__brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--navy-950); }
+.b2b-header__brand img { width: 32px; height: 32px; }
+
+.b2b-nav {
+  display: flex;
+  gap: 4px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  -webkit-overflow-scrolling: touch;
+}
+.b2b-nav a {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--slate);
+  white-space: nowrap;
+}
+.b2b-nav a.active { background: var(--navy-950); color: #fff; }
+
+.b2b-content { padding: 20px 16px; max-width: 900px; margin: 0 auto; }
+
+.b2b-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.b2b-stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 16px; text-align: center; }
+.b2b-stat__value { font-size: 1.6rem; font-weight: 700; color: var(--navy-950); }
+.b2b-stat__label { font-size: 0.8rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.03em; }
+
+.b2b-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.b2b-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--radius-md); overflow: hidden; font-size: 0.88rem; min-width: 480px; }
+.b2b-table th, .b2b-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.b2b-table th { background: var(--navy-100); color: var(--navy-950); }
+
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.badge--pending { background: #FFF3CD; color: #8A6D1D; }
+.badge--submitted { background: var(--navy-100); color: var(--navy-950); }
+.badge--processing { background: #E4EAF3; color: var(--navy-800); }
+.badge--completed { background: var(--success-bg); color: var(--success); }
+.badge--cancelled { background: var(--red-50); color: var(--red-700); }
+
+/* On mobile, don't let the WebView/PWA clip content behind status/nav
+   bars (Android build wraps this in a WebView with edge-to-edge). */
+@media (max-width: 640px) {
+  .portal-card { padding: 26px 18px; }
+  .b2b-content { padding: 16px 12px; }
+}
+
+/* ---------- B2B bulk-add boxes ---------- */
+.b2b-add-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+.b2b-add-box__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.b2b-add-box__stack input,
+.b2b-add-box__stack select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13.5px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 11px 10px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.b2b-add-box__upload {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  font-size: 12.5px;
+  color: var(--slate);
+}
+.b2b-add-box__upload input[type="file"] { font-size: 12px; max-width: 100%; }
+
+/* ---------- B2B patient cards (replaces the old table — a search
+   dropdown inside a scrollable table gets visually clipped by the
+   table's own overflow, so each patient is its own free-standing card
+   instead) ---------- */
+.b2b-patient-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+.b2b-patient-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.b2b-patient-card__row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.b2b-patient-card__label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--slate);
+}
+
+@media (max-width: 560px) {
+  .b2b-patient-card__row { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- B2B history (expandable) ---------- */
+.b2b-history-list { display: flex; flex-direction: column; gap: 10px; }
+.b2b-history-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.b2b-history-card__summary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  flex-wrap: wrap;
+}
+.b2b-history-card__chevron { color: var(--slate); font-size: 11px; }
+.b2b-history-card__details {
+  padding: 4px 14px 14px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
