@@ -1,0 +1,67 @@
+.step-tracker {
+  position: relative;
+  padding: 8px 4px 0;
+  margin-bottom: 28px;
+}
+.step-tracker__line {
+  position: absolute;
+  top: 15px;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: var(--line);
+  border-radius: 2px;
+}
+.step-tracker__line-fill {
+  height: 100%;
+  background: var(--red-600);
+  border-radius: 2px;
+  transition: width 0.5s var(--ease);
+}
+.step-tracker__nodes {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+.step-tracker__node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+.step-tracker__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--slate-light);
+  transition: all 0.3s var(--ease);
+}
+.step-tracker__node.is-active .step-tracker__dot {
+  border-color: var(--red-600);
+  background: var(--red-600);
+}
+.step-tracker__node.is-current .step-tracker__dot {
+  box-shadow: 0 0 0 4px var(--red-50);
+}
+.step-tracker__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--slate-light);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.step-tracker__node.is-active .step-tracker__label {
+  color: var(--navy-950);
+}
+
+@media (max-width: 480px) {
+  .step-tracker__label { display: none; }
+  .step-tracker__node.is-current .step-tracker__label {
+    display: block;
+    position: absolute;
+    top: 20px;
+    white-space: nowrap;
+  }
+}
