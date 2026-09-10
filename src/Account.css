@@ -1,0 +1,83 @@
+.account-login {
+  max-width: 480px;
+  margin: 24px auto 0;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.account-login__intro {
+  font-size: 13.5px;
+  color: var(--slate);
+  line-height: 1.5;
+}
+
+.account-history {
+  max-width: 480px;
+  margin: 16px auto 40px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.account-history__phone {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--slate);
+}
+
+.booking-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.booking-history-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-card);
+}
+.booking-history-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.booking-history-card__date {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy-950);
+}
+.booking-history-card__type {
+  font-size: 13px;
+  color: var(--slate);
+}
+.booking-history-card__patient {
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.booking-history-card__report-pending {
+  font-size: 12px;
+  color: var(--slate-light);
+  margin-top: 4px;
+}
+.report-link { margin-top: 4px; }
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--navy-100);
+  color: var(--navy-800);
+}
+.badge--cancelled { background: #F1F1F1; color: #8A8A8A; }
+.badge--completed { background: #E4EAF3; color: var(--navy-950); }
+.badge--confirmed { background: #E9F7EF; color: #1E7B4D; }
+.badge--report_ready { background: #F1E9FB; color: #6B46C1; }
